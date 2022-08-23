@@ -1,0 +1,106 @@
+{% extends "base.html" %} {% block main %}
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Prediction Results</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5>Prediction Input:</h5>
+        <div>duration: <span id="dur"></span></div>
+        <div>waiting: <span id="wait"></span></div>
+        <h5 class="pt-3">Prediction Classification:</h5>
+        <div id="prediction"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <a class="btn btn-primary" href="/results" role="button">View DB</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container pt-5">
+  <div class="row justify-content-md-center">
+    <div class="col-md-4">
+      <h1>Geyser Prediction</h1>
+      <form action="" id="post-form">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="duration">duration</label>
+          <input
+            type="number"
+            step="0.1"
+            class="form-control"
+            id="duration"
+            placeholder=""
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="waiting">waiting</label>
+          <input
+            type="number"
+            step="0.1"
+            class="form-control"
+            id="waiting"
+            placeholder=""
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          value="Submit"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#exampleModal"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).on("submit", "#post-form", function (e) {
+    e.preventDefault();
+    $.ajax({
+      type: "POST",
+      url: '{% url "predict:submit_prediction" %}',
+      data: {
+        duration: $("#duration").val(),
+        waiting: $("#waiting").val(),
+        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+        action: "post",
+      },
+      success: function (json) {
+        document.forms["post-form"].reset();
+        document.getElementById("prediction").innerHTML = json["result"];
+        document.getElementById("dur").innerHTML = json["duration"];
+        document.getElementById("wait").innerHTML = json["waiting"];
+      },
+      error: function (xhr, errmsg, err) {},
+    });
+  });
+</script>
+
+{% endblock %}

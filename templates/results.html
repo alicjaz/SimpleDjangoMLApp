@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block main %}
+<div class="container pt-5">
+  <div class="row">
+    <h1>Prediction Results</h1>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">duration</th>
+          <th scope="col">waiting</th>
+          <th scope="col">Prediction</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in dataset %}
+        <tr>
+          <th scope="row">{{ data.id }}</th>
+          <td>{{ data.duration }}</td>
+          <td>{{ data.waiting }}</td>
+          <td>{{ data.classification }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
